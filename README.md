@@ -1,10 +1,10 @@
-# PhpRapidAdmin
+# phpRapidAdmin
 
 **Lightning-fast, single-file MySQL database management for PHP.**
 
-> **Free & Open Source** — PhpRapidAdmin is 100% free to use, modify, and distribute under the [MIT License](LICENSE). No hidden costs, no premium tiers, no paywalls.
+> **Free & Open Source** — phpRapidAdmin is 100% free to use, modify, and distribute under the [MIT License](LICENSE). No hidden costs, no premium tiers, no paywalls.
 
-PhpRapidAdmin is a modern, zero-dependency PHP database admin tool. Drop one file on your server and get a full-featured MySQL/MariaDB management dashboard — no frameworks, no npm, no Composer, no CDN assets.
+phpRapidAdmin is a modern, zero-dependency PHP database admin tool. Drop one file on your server and get a full-featured MySQL/MariaDB management dashboard — no frameworks, no npm, no Composer, no CDN assets.
 
 ![PHP Version](https://img.shields.io/badge/PHP-7.4%2B-blue)
 ![License](https://img.shields.io/badge/License-MIT-green)
@@ -31,11 +31,11 @@ PhpRapidAdmin is a modern, zero-dependency PHP database admin tool. Drop one fil
 
 ---
 
-## Why PhpRapidAdmin?
+## Why phpRapidAdmin?
 
-PhpRapidAdmin is inspired by **phpMyAdmin** (the gold standard for MySQL management) and **phpMiniAdmin** (the simplicity of a single-file tool). It takes the best of both and adds modern improvements.
+phpRapidAdmin is inspired by **phpMyAdmin** (the gold standard for MySQL management) and **phpMiniAdmin** (the simplicity of a single-file tool). It takes the best of both and adds modern improvements.
 
-| Feature | **PhpRapidAdmin** | **phpMyAdmin** | **phpMiniAdmin** |
+| Feature | **phpRapidAdmin** | **phpMyAdmin** | **phpMiniAdmin** |
 |---|---|---|---|
 | **Setup Time** | < 5 seconds | 5–15 minutes | < 5 seconds |
 | **File Count** | 1 file | Hundreds of files | 1 file |
@@ -50,7 +50,7 @@ PhpRapidAdmin is inspired by **phpMyAdmin** (the gold standard for MySQL managem
 | **CSV + Gzip Export** | Yes | No | No |
 | **Memory Usage** | ~2 MB | ~8–15 MB | ~2 MB |
 
-> **The Bottom Line:** PhpRapidAdmin combines the simplicity of phpMiniAdmin with the power of phpMyAdmin — all in a single, modern, mobile-friendly PHP file with PDO support and dark mode. Best of both worlds.
+> **The Bottom Line:** phpRapidAdmin combines the simplicity of phpMiniAdmin with the power of phpMyAdmin — all in a single, modern, mobile-friendly PHP file with PDO support and dark mode. Best of both worlds.
 
 For a detailed comparison, see [comparison.md](comparison.md).
 
@@ -78,12 +78,6 @@ cp phpRapidAdmin/phpRapidAdmin.php /var/www/html/
 2. Place it in your web server's document root (e.g., `/var/www/html/` or `C:\laragon\www\`)
 3. Open it in your browser: `http://localhost/phpRapidAdmin.php`
 
-### Option 3: composer (if you prefer)
-
-```bash
-composer require amanullah-1/phprapidadmin
-```
-
 ---
 
 ## Configuration
@@ -92,10 +86,10 @@ Open `phpRapidAdmin.php` and edit the configuration variables at the top of the 
 
 ```php
 // Set a password to protect access (leave empty for local-only usage)
-$NANO_PASSWORD = '';
+$RAPID_PASSWORD = '';
 
 // Pre-configure database servers for quick access
-$NANO_SERVERS = [
+$RAPID_SERVERS = [
     'localhost' => [
         'host'=>'127.0.0.1', 'port'=>3306,
         'user'=>'root', 'pass'=>'',
@@ -107,24 +101,24 @@ $NANO_SERVERS = [
 ];
 
 // Rows per page for browsing (default: 50)
-$NANO_ROWS_PER_PAGE = 50;
+$RAPID_ROWS_PER_PAGE = 50;
 
 // Browser tab title
-$NANO_TITLE = 'PhpRapidAdmin';
+$RAPID_TITLE = 'phpRapidAdmin';
 
 // Optional: directory for server-side SQL dumps (empty = browser download)
-$NANO_DUMP_DIR = '';
+$RAPID_DUMP_DIR = '';
 ```
 
 ### Password Protection
 
 - **Local access** (127.0.0.1 / ::1): No password required by default
-- **Remote access**: Requires `$NANO_PASSWORD` to be set; otherwise shows a "Setup required" page
+- **Remote access**: Requires `$RAPID_PASSWORD` to be set; otherwise shows a "Setup required" page
 - Credentials are stored in a cookie for 30 days
 
 ### Multiple Servers
 
-Define servers in `$NANO_SERVERS` to quickly switch between databases on different hosts from the UI dropdown.
+Define servers in `$RAPID_SERVERS` to quickly switch between databases on different hosts from the UI dropdown.
 
 ---
 
@@ -173,7 +167,6 @@ Define servers in `$NANO_SERVERS` to quickly switch between databases on differe
 
 ```
 phpRapidAdmin/
-├── index.html              # Landing page / project website
 ├── README.md               # This file
 └── phpRapidAdmin.php       # The main application (single file)
 ```
@@ -182,7 +175,7 @@ phpRapidAdmin/
 
 ## Free & Open Source
 
-PhpRapidAdmin is **100% free** and **open source**. There are:
+phpRapidAdmin is **100% free** and **open source**. There are:
 
 - **No premium tiers**
 - **No hidden fees**
@@ -261,7 +254,7 @@ Open an issue with the **feature request** label. Describe:
 
 ## Buy Me a Coffee
 
-If PhpRapidAdmin saved you time or helped your project, consider buying me a coffee! Your support helps keep this project maintained and evolving.
+If phpRapidAdmin saved you time or helped your project, consider buying me a coffee! Your support helps keep this project maintained and evolving.
 
 <a href="https://buymeacoffee.com/amanullah" target="_blank">
   <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" width="200">
@@ -301,7 +294,7 @@ SOFTWARE.
 
 ## Acknowledgments
 
-- Inspired by [PHP Mini MySQL Admin](http://phpminiadmin.sourceforge.net) by Oleg Savchuk
+- Inspired by [phpMyAdmin](https://www.phpmyadmin.net) and [phpMiniAdmin](http://phpminiadmin.sourceforge.net) by Oleg Savchuk
 - Built with PHP, vanilla CSS, and vanilla JavaScript
 - No frameworks were harmed in the making of this tool
 

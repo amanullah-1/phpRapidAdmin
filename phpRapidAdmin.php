@@ -19,20 +19,20 @@
 // Site password. STRONGLY recommended if this server is reachable from the
 // internet. Leave blank to allow only local (127.0.0.1) connections without
 // a password — remote access without a password is always blocked.
-$NANO_PASSWORD = '';
+$RAPID_PASSWORD = '';
 
 // Pre-configure one or more MySQL/MariaDB connections so nobody has to type
 // credentials into the browser. Leave empty to be asked on first run.
 // Example:
-// $NANO_SERVERS = [
+// $RAPID_SERVERS = [
 //   'Main server' => ['host'=>'127.0.0.1','user'=>'root','pass'=>'secret','port'=>'','socket'=>'','db'=>'','charset'=>'utf8mb4'],
 // ];
-$NANO_SERVERS = [];
+$RAPID_SERVERS = [];
 
-$NANO_ROWS_PER_PAGE = 50;   // rows per page when browsing table data
-$NANO_TITLE         = 'phpRapidAdmin';
-$NANO_VERSION       = '1.0';
-$NANO_DUMP_DIR      = '';   // server-side dump directory (leave empty for browser download)
+$RAPID_ROWS_PER_PAGE = 50;   // rows per page when browsing table data
+$RAPID_TITLE         = 'phpRapidAdmin';
+$RAPID_VERSION       = '1.0';
+$RAPID_DUMP_DIR      = '';   // server-side dump directory (leave empty for browser download)
 
 // ============================================================================
 //  End of configuration — no need to edit anything below this line.
@@ -45,11 +45,11 @@ if (function_exists('date_default_timezone_set') && !ini_get('date.timezone')) {
 }
 
 session_name('nanodb_sid');
-$NANO_HTTPS = !empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off';
+$RAPID_HTTPS = !empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off';
 session_set_cookie_params([
     'lifetime' => 0,
     'path'     => '/',
-    'secure'   => $NANO_HTTPS,
+    'secure'   => $RAPID_HTTPS,
     'httponly' => true,
     'samesite' => 'Lax',
 ]);
@@ -69,10 +69,10 @@ function is_local_request() {
 }
 
 function csrf_token() {
-    if (empty($_SESSION['nano_csrf'])) {
-        $_SESSION['nano_csrf'] = bin2hex(random_bytes(16));
+    if (empty($_SESSION['RAPID_csrf'])) {
+        $_SESSION['RAPID_csrf'] = bin2hex(random_bytes(16));
     }
-    return $_SESSION['nano_csrf'];
+    return $_SESSION['RAPID_csrf'];
 }
 function csrf_field() { return '<input type="hidden" name="csrf" value="' . h(csrf_token()) . '">'; }
 function csrf_ok() {
@@ -80,12 +80,12 @@ function csrf_ok() {
 }
 
 function flash($type, $msg) {
-    if (!isset($_SESSION['nano_flash'])) $_SESSION['nano_flash'] = [];
-    $_SESSION['nano_flash'][] = [$type, $msg];
+    if (!isset($_SESSION['RAPID_flash'])) $_SESSION['RAPID_flash'] = [];
+    $_SESSION['RAPID_flash'][] = [$type, $msg];
 }
 function take_flashes() {
-    $f = $_SESSION['nano_flash'] ?? [];
-    unset($_SESSION['nano_flash']);
+    $f = $_SESSION['RAPID_flash'] ?? [];
+    unset($_SESSION['RAPID_flash']);
     return $f;
 }
 
@@ -101,8 +101,8 @@ function redirect($url) {
 // Build a URL back to this script. Extra params are merged over the
 // "sticky" state (server + database) so links naturally keep context.
 function nurl($params = []) {
-    global $NANO_STATE;
-    $q = array_merge($NANO_STATE ?? [], $params);
+    global $RAPID_STATE;
+    $q = array_merge($RAPID_STATE ?? [], $params);
     foreach ($q as $k => $v) {
         if ($v === null || $v === '') unset($q[$k]);
     }
@@ -325,17 +325,17 @@ function db_value($sql) {
 }
 
 function cached($key, $callback, $ttl = 30) {
-    global $NANO_CACHE_HIT, $NANO_CACHE_QTIME;
-    $cacheKey = 'nano_cache_' . md5($key);
+    global $RAPID_CACHE_HIT, $RAPID_CACHE_QTIME;
+    $cacheKey = 'RAPID_cache_' . md5($key);
     $force = !empty($_GET['refresh']);
     if (!$force && isset($_SESSION[$cacheKey]) && (time() - $_SESSION[$cacheKey]['time'] < $ttl)) {
-        $NANO_CACHE_HIT = true;
+        $RAPID_CACHE_HIT = true;
         return $_SESSION[$cacheKey]['data'];
     }
-    $NANO_CACHE_HIT = false;
+    $RAPID_CACHE_HIT = false;
     $t0 = microtime(true);
     $data = $callback();
-    $NANO_CACHE_QTIME = round(microtime(true) - $t0, 4);
+    $RAPID_CACHE_QTIME = round(microtime(true) - $t0, 4);
     $_SESSION[$cacheKey] = ['data' => $data, 'time' => time()];
     return $data;
 }
@@ -506,18 +506,18 @@ function is_binary_type($colType) {
 // ---------------------------------------------------------------------------
 
 function render_head($title) {
-    global $NANO_TITLE;
+    global $RAPID_TITLE;
     ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title><?php e($title ? $title . ' · ' . $NANO_TITLE : $NANO_TITLE) ?></title>
+<title><?php e($title ? $title . ' · ' . $RAPID_TITLE : $RAPID_TITLE) ?></title>
 <script>
 (function(){ // apply theme before paint to avoid a flash
   try {
-    var t = localStorage.getItem('nano_theme');
+    var t = localStorage.getItem('RAPID_theme');
     if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
       document.documentElement.classList.add('dark');
     }
@@ -525,12 +525,12 @@ function render_head($title) {
 })();
 document.addEventListener('DOMContentLoaded', function(){
   // compact view toggle
-  var compact = localStorage.getItem('nano_compact');
+  var compact = localStorage.getItem('RAPID_compact');
   if(compact === '1') document.body.classList.add('compact');
   var compactToggle = document.querySelector('.topbar .compact-toggle');
   if(compactToggle) compactToggle.addEventListener('change', function(){
     if(this.checked) document.body.classList.add('compact'); else document.body.classList.remove('compact');
-    localStorage.setItem('nano_compact', this.checked ? '1' : '0');
+    localStorage.setItem('RAPID_compact', this.checked ? '1' : '0');
   });
   // back to top button
   var bt = document.createElement('button');
@@ -686,11 +686,11 @@ textarea.sql{width:100%;min-height:130px;padding:10px;border-radius:8px;border:1
 
 function render_topbar($ctx) {
     // $ctx: srv, db, table, connected(bool), servers(array), dbList(array)
-    global $NANO_TITLE;
+    global $RAPID_TITLE;
     ?>
 <div class="topbar">
   <button class="iconbtn sidebar-toggle" type="button" onclick="var s=document.getElementById('sidebar');if(window.innerWidth<=900){s.classList.toggle('open')}else{s.classList.toggle('closed')}">&#9776;</button>
-  <a class="brand" href="<?php e(nurl(['db'=>null,'t'=>null,'a'=>null])) ?>"><span class="dot"></span><?php e($NANO_TITLE) ?></a>
+  <a class="brand" href="<?php e(nurl(['db'=>null,'t'=>null,'a'=>null])) ?>"><span class="dot"></span><?php e($RAPID_TITLE) ?></a>
 <?php if (!empty($ctx['connected'])): ?>
   <?php if (!empty($ctx['servers']) && count($ctx['servers']) > 1): ?>
   <select onchange="location=this.value">
@@ -721,8 +721,8 @@ function render_topbar($ctx) {
     <a class="<?php e($ctx['a']==='phpinfo'?'active':'') ?>" href="<?php e(nurl(['a'=>'phpinfo'])) ?>">&#8505; <span class="txt">phpinfo</span></a>
   </div>
   <div class="spacer"></div>
-  <button class="iconbtn" type="button" onclick="var h=document.documentElement;h.classList.toggle('dark');localStorage.setItem('nano_theme',h.classList.contains('dark')?'dark':'light')">&#9788;</button>
-  <button class="iconbtn" type="button" onclick="document.body.classList.toggle('compact'); localStorage.setItem('nano_compact',document.body.classList.contains('compact'))">&#9646;</button>
+  <button class="iconbtn" type="button" onclick="var h=document.documentElement;h.classList.toggle('dark');localStorage.setItem('RAPID_theme',h.classList.contains('dark')?'dark':'light')">&#9788;</button>
+  <button class="iconbtn" type="button" onclick="document.body.classList.toggle('compact'); localStorage.setItem('RAPID_compact',document.body.classList.contains('compact'))">&#9646;</button>
   <a class="iconbtn" href="<?php e(nurl(['logout'=>1])) ?>">Logout</a>
 <?php else: ?>
   <div class="spacer"></div>
@@ -740,15 +740,15 @@ function render_flashes() {
 }
 
 function render_footer() {
-    global $NANO_TITLE, $NANO_VERSION;
+    global $RAPID_TITLE, $RAPID_VERSION;
     ?>
-<div class="footer"><?php e($NANO_TITLE) ?> <?php e($NANO_VERSION) ?> &middot; a small, single-file database companion</div>
+<div class="footer"><?php e($RAPID_TITLE) ?> <?php e($RAPID_VERSION) ?> &middot; a small, single-file database companion</div>
 <script>
 function nanoConfirm(msg){ return confirm(msg || 'Are you sure?'); }
 
 // ---- SQL editor history (kept in localStorage, newest last) -------------
 (function(){
-  var KEY='nano_sql_history', MAX=40;
+  var KEY='RAPID_sql_history', MAX=40;
   window.nanoSqlHistoryPush = function(sql){
     if(!sql) return;
     try{
@@ -846,10 +846,10 @@ function render_sidebar($ctx) {
 // ---------------------------------------------------------------------------
 
 function page_login($error = '') {
-    global $NANO_TITLE;
+    global $RAPID_TITLE;
     render_head('Login');
     ?>
-<div class="topbar"><a class="brand" href="#"><span class="dot"></span><?php e($NANO_TITLE) ?></a></div>
+<div class="topbar"><a class="brand" href="#"><span class="dot"></span><?php e($RAPID_TITLE) ?></a></div>
 <div class="centerbox">
   <div class="card">
     <h2>Sign in</h2>
@@ -871,16 +871,16 @@ function page_login($error = '') {
 }
 
 function page_connect($error = '', $vals = []) {
-    global $NANO_TITLE;
+    global $RAPID_TITLE;
     render_head('Connect');
     ?>
-<div class="topbar"><a class="brand" href="#"><span class="dot"></span><?php e($NANO_TITLE) ?></a>
+<div class="topbar"><a class="brand" href="#"><span class="dot"></span><?php e($RAPID_TITLE) ?></a>
   <div class="spacer"></div>
 </div>
 <div class="centerbox" style="max-width:480px">
   <div class="card">
     <h2>Connect to a database server</h2>
-    <p class="small">These settings can also be hard-coded at the top of this file (<code>$NANO_SERVERS</code>) so nobody has to enter them here.</p>
+    <p class="small">These settings can also be hard-coded at the top of this file (<code>$RAPID_SERVERS</code>) so nobody has to enter them here.</p>
     <?php if ($error): ?><div class="alert err"><?php e($error) ?></div><?php endif; ?>
     <form method="post">
       <?php echo csrf_field() ?>
@@ -920,32 +920,32 @@ if (isset($_GET['logout'])) {
         $p = session_get_cookie_params();
         setcookie(session_name(), '', time() - 42000, $p['path'], $p['domain'], $p['secure'], $p['httponly']);
     }
-    setcookie('nano_conn', '', time() - 42000, '/');
+    setcookie('RAPID_conn', '', time() - 42000, '/');
     session_destroy();
     redirect(self_path());
 }
 
-if ($NANO_PASSWORD !== '') {
+if ($RAPID_PASSWORD !== '') {
     if (!empty($_POST['do_login'])) {
-        if (csrf_ok() && hash_equals($NANO_PASSWORD, (string)($_POST['password'] ?? ''))) {
-            $_SESSION['nano_auth'] = true;
+        if (csrf_ok() && hash_equals($RAPID_PASSWORD, (string)($_POST['password'] ?? ''))) {
+            $_SESSION['RAPID_auth'] = true;
         } else {
             page_login('Incorrect password.');
         }
     }
-    if (empty($_SESSION['nano_auth'])) {
+    if (empty($_SESSION['RAPID_auth'])) {
         page_login();
     }
 } else {
     if (!is_local_request()) {
         render_head('Setup required');
         ?>
-<div class="topbar"><a class="brand" href="#"><span class="dot"></span><?php e($NANO_TITLE) ?></a></div>
+<div class="topbar"><a class="brand" href="#"><span class="dot"></span><?php e($RAPID_TITLE) ?></a></div>
 <div class="centerbox">
   <div class="card">
     <h2>Setup required</h2>
     <p>For safety, remote access is blocked until you set a password. Open this file and set:</p>
-    <pre class="mono" style="background:var(--code-bg);color:var(--code-text);padding:12px;border-radius:8px">$NANO_PASSWORD = 'choose-something-strong';</pre>
+    <pre class="mono" style="background:var(--code-bg);color:var(--code-text);padding:12px;border-radius:8px">$RAPID_PASSWORD = 'choose-something-strong';</pre>
     <p class="small">Local (127.0.0.1) access does not require this.</p>
   </div>
 </div>
@@ -959,11 +959,11 @@ if ($NANO_PASSWORD !== '') {
 //  Bootstrap: pick a server config, connect
 // ---------------------------------------------------------------------------
 
-$srvKeys = array_keys($NANO_SERVERS);
+$srvKeys = array_keys($RAPID_SERVERS);
 $srvKey = $_GET['srv'] ?? ($_POST['srv'] ?? ($srvKeys[0] ?? ''));
-if (!empty($NANO_SERVERS)) {
-    if (!isset($NANO_SERVERS[$srvKey])) $srvKey = $srvKeys[0];
-    $cfg = $NANO_SERVERS[$srvKey];
+if (!empty($RAPID_SERVERS)) {
+    if (!isset($RAPID_SERVERS[$srvKey])) $srvKey = $srvKeys[0];
+    $cfg = $RAPID_SERVERS[$srvKey];
     $cfg += ['host'=>'','user'=>'','pass'=>'','db'=>'','port'=>'','socket'=>'','charset'=>'utf8mb4'];
 } else {
     $srvKey = '';
@@ -981,16 +981,16 @@ if (!empty($NANO_SERVERS)) {
             'charset' => 'utf8mb4',
         ];
         if (!empty($_POST['remember'])) {
-            setcookie('nano_conn', json_encode($cfg), time() + 60 * 60 * 24 * 30, '/', '', $NANO_HTTPS, true);
+            setcookie('RAPID_conn', json_encode($cfg), time() + 60 * 60 * 24 * 30, '/', '', $RAPID_HTTPS, true);
         } else {
-            setcookie('nano_conn', '', time() - 42000, '/');
+            setcookie('RAPID_conn', '', time() - 42000, '/');
         }
-        $_SESSION['nano_conn'] = $cfg;
-    } elseif (!empty($_SESSION['nano_conn'])) {
-        $cfg = $_SESSION['nano_conn'];
-    } elseif (!empty($_COOKIE['nano_conn'])) {
-        $decoded = json_decode($_COOKIE['nano_conn'], true);
-        if (is_array($decoded)) { $cfg = $decoded; $_SESSION['nano_conn'] = $cfg; }
+        $_SESSION['RAPID_conn'] = $cfg;
+    } elseif (!empty($_SESSION['RAPID_conn'])) {
+        $cfg = $_SESSION['RAPID_conn'];
+    } elseif (!empty($_COOKIE['RAPID_conn'])) {
+        $decoded = json_decode($_COOKIE['RAPID_conn'], true);
+        if (is_array($decoded)) { $cfg = $decoded; $_SESSION['RAPID_conn'] = $cfg; }
     }
     if (!isset($cfg)) {
         page_connect();
@@ -998,19 +998,19 @@ if (!empty($NANO_SERVERS)) {
 }
 
 if (!db_connect($cfg)) {
-    if (empty($NANO_SERVERS)) {
-        unset($_SESSION['nano_conn']);
+    if (empty($RAPID_SERVERS)) {
+        unset($_SESSION['RAPID_conn']);
         page_connect('Could not connect: ' . $DB_ERROR, $cfg);
     }
     render_head('Connection error');
     ?>
-<div class="topbar"><a class="brand" href="#"><span class="dot"></span><?php e($NANO_TITLE) ?></a>
+<div class="topbar"><a class="brand" href="#"><span class="dot"></span><?php e($RAPID_TITLE) ?></a>
   <div class="spacer"></div></div>
 <div class="centerbox">
   <div class="card">
     <h2>Connection error</h2>
     <div class="alert err"><?php e($DB_ERROR) ?></div>
-    <p class="small">Check the <code>$NANO_SERVERS</code> settings at the top of this file.</p>
+    <p class="small">Check the <code>$RAPID_SERVERS</code> settings at the top of this file.</p>
   </div>
 </div>
 <?php
@@ -1018,8 +1018,8 @@ if (!db_connect($cfg)) {
     exit;
 }
 
-$NANO_STATE = [];
-if ($srvKey !== '') $NANO_STATE['srv'] = $srvKey;
+$RAPID_STATE = [];
+if ($srvKey !== '') $RAPID_STATE['srv'] = $srvKey;
 
 // current database (optional) ------------------------------------------------
 $db = trim($_GET['db'] ?? '');
@@ -1030,7 +1030,7 @@ if ($db !== '') {
         redirect(nurl(['db' => null, 't' => null, 'a' => null]));
     }
 }
-if ($db !== '') $NANO_STATE['db'] = $db;
+if ($db !== '') $RAPID_STATE['db'] = $db;
 
 // Query URL persistence — auto-populate SQL textarea from URL
 $q = $_GET['q'] ?? '';
@@ -1246,8 +1246,8 @@ handle_post_ops($db, $table);
 // ---------------------------------------------------------------------------
 
 function view_databases($page = 0) {
-    global $NANO_ROWS_PER_PAGE;
-    $perPage = $NANO_ROWS_PER_PAGE ?? 50;
+    global $RAPID_ROWS_PER_PAGE;
+    $perPage = $RAPID_ROWS_PER_PAGE ?? 50;
     $t0 = microtime(true);
     $dbs = db_all_num('SHOW DATABASES');
     $elapsed = round(microtime(true) - $t0, 4);
@@ -1294,8 +1294,8 @@ function view_databases($page = 0) {
 }
 
 function view_tables($db, $page = 0) {
-    global $NANO_ROWS_PER_PAGE;
-    $perPage = $NANO_ROWS_PER_PAGE ?? 50;
+    global $RAPID_ROWS_PER_PAGE;
+    $perPage = $RAPID_ROWS_PER_PAGE ?? 50;
     $t0 = microtime(true);
     $tables = db_all("SELECT TABLE_NAME AS Name, ENGINE AS Engine, TABLE_ROWS AS `Rows`,
                        DATA_LENGTH AS Data_length, INDEX_LENGTH AS Index_length,
@@ -1370,7 +1370,7 @@ function view_tables($db, $page = 0) {
 
 function render_pager($page, $hasNext, $extra = [], $totalCount = null) {
     if ($page == 0 && !$hasNext) return;
-    $perPage = $GLOBALS['NANO_ROWS_PER_PAGE'] ?? 50;
+    $perPage = $GLOBALS['RAPID_ROWS_PER_PAGE'] ?? 50;
     $totalPages = $totalCount !== null ? ceil($totalCount / $perPage) : ($hasNext ? $page + 2 : $page + 1);
     $cur = $page + 1;
     echo '<div class="pager">';
@@ -1712,7 +1712,7 @@ function render_generic_result($res, $capRows) {
 }
 
 function view_sql($db, $table) {
-    global $NANO_ROWS_PER_PAGE;
+    global $RAPID_ROWS_PER_PAGE;
     $q = $_POST['q'] ?? '';
     $page = max(0, (int)($_GET['p'] ?? 0));
     $ran = null;
@@ -1723,7 +1723,7 @@ function view_sql($db, $table) {
             redirect(nurl(['a' => 'sql', 'q' => base64_encode($q)]));
         }
         $t0 = microtime(true);
-        $r = run_sql_multi($q, true, $page, $NANO_ROWS_PER_PAGE + 1);
+        $r = run_sql_multi($q, true, $page, $RAPID_ROWS_PER_PAGE + 1);
         $r['elapsed'] = round(microtime(true) - $t0, 4);
         $ran = $r;
         // Redirect with query encoded in URL for persistence
@@ -1769,7 +1769,7 @@ function view_sql($db, $table) {
   <?php elseif ($ran['result'] === null): ?>
     <div class="alert ok">Nothing to execute.</div>
   <?php elseif (is_select_like($ran['sql'])): ?>
-    <?php $meta = render_generic_result($ran['result'], $NANO_ROWS_PER_PAGE); ?>
+    <?php $meta = render_generic_result($ran['result'], $RAPID_ROWS_PER_PAGE); ?>
     <?php render_pager($page, $meta['hasMore'], ['a' => 'sql']); ?>
     <p class="small mono muted"><?php e($ran['sql']) ?></p>
   <?php else: ?>
@@ -1799,8 +1799,8 @@ function do_export_stream($db, $table, $format = 'sql') {
     $fname = $db . ($table !== '' ? '.' . $table : '') . $ext . ($gz ? '.gz' : '');
 
     // Server-side dump option
-    if (!empty($NANO_DUMP_DIR)) {
-        $dumpFile = $NANO_DUMP_DIR . $fname;
+    if (!empty($RAPID_DUMP_DIR)) {
+        $dumpFile = $RAPID_DUMP_DIR . $fname;
         $success = false;
         if ($format === 'csv') {
             // CSV dump logic would go here
@@ -1956,7 +1956,7 @@ $page = max(0, (int)($_GET['p'] ?? 0));
 $ctx = [
     'connected' => true,
     'srv'       => $srvKey,
-    'servers'   => $NANO_SERVERS,
+    'servers'   => $RAPID_SERVERS,
     'db'        => $db,
     'table'     => $table,
     'a'         => $action,
@@ -1985,7 +1985,7 @@ if ($db === '' && !in_array($action, ['processlist', 'variables', 'status', 'php
             break;
         case 'browse':
             if ($table === '') { view_tables($db); break; }
-            view_browse($db, $table, $page, $GLOBALS['NANO_ROWS_PER_PAGE']);
+            view_browse($db, $table, $page, $GLOBALS['RAPID_ROWS_PER_PAGE']);
             break;
         case 'structure':
             if ($table === '') { view_tables($db); break; }
