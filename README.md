@@ -52,8 +52,6 @@ phpRapidAdmin is inspired by **phpMyAdmin** (the gold standard for MySQL managem
 
 > **The Bottom Line:** phpRapidAdmin combines the simplicity of phpMiniAdmin with the power of phpMyAdmin — all in a single, modern, mobile-friendly PHP file with PDO support and dark mode. Best of both worlds.
 
-For a detailed comparison, see [comparison.md](comparison.md).
-
 ## Requirements
 
 - PHP 7.4 or higher
@@ -168,6 +166,9 @@ Define servers in `$RAPID_SERVERS` to quickly switch between databases on differ
 ```
 phpRapidAdmin/
 ├── README.md               # This file
+├── CONTRIBUTING.md         # Contribution guidelines
+├── LICENSE.md              # MIT License
+├── index.html              # Landing page
 └── phpRapidAdmin.php       # The main application (single file)
 ```
 
@@ -188,67 +189,13 @@ You are free to:
 - Distribute copies
 - Use it in client work
 
-Licensed under the [MIT License](LICENSE). If you find it useful, a star on GitHub or a coffee goes a long way!
+Licensed under the [MIT License](LICENSE.md). If you find it useful, a star on GitHub or a coffee goes a long way!
 
 ---
 
 ## Contributing
 
-Contributions are welcome! Here's how you can help:
-
-### Reporting Bugs
-
-1. Check [existing issues](https://github.com/amanullah-1/phpRapidAdmin/issues) first
-2. Open a new issue with:
-   - PHP version
-   - MySQL/MariaDB version
-   - Steps to reproduce
-   - Expected vs actual behavior
-
-### Suggesting Features
-
-Open an issue with the **feature request** label. Describe:
-- What you'd like to see
-- Why it would be useful
-- How it should work
-
-### Submitting Code
-
-1. **Fork** the repository
-2. **Create a branch** for your feature:
-   ```bash
-   git checkout -b feature/amazing-feature
-   ```
-3. **Make your changes** in `phpRapidAdmin.php`
-4. **Test** on multiple PHP versions if possible (7.4, 8.0, 8.1, 8.2, 8.3)
-5. **Commit** with a clear message:
-   ```bash
-   git commit -m "Add: amazing feature description"
-   ```
-6. **Push** to your fork:
-   ```bash
-   git push origin feature/amazing-feature
-   ```
-7. Open a **Pull Request** with:
-   - Description of changes
-   - Screenshots (for UI changes)
-   - PHP/MySQL versions tested
-
-### Development Guidelines
-
-- Keep it **single-file** — no external dependencies
-- Follow existing code style (inline CSS/JS, PHP conventions)
-- Use the `h()` helper for XSS prevention on all output
-- Use `csrf_ok()` to verify CSRF tokens on POST operations
-- Use `db_*` abstraction functions for database operations
-- Test on both PDO and mysqli drivers
-
-### Code Style
-
-- PHP: Follow PSR-12 where practical
-- CSS: Use CSS variables from `:root`
-- JS: Vanilla JavaScript only (no frameworks)
-- Keep the file self-contained
+Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on reporting bugs, suggesting features, and submitting code.
 
 ---
 
@@ -264,37 +211,13 @@ If phpRapidAdmin saved you time or helped your project, consider buying me a cof
 
 ## License
 
-This project is licensed under the **MIT License**.
-
-```
-MIT License
-
-Copyright (c) 2024 Aman Ullah
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
+This project is licensed under the **MIT License**. See [LICENSE.md](LICENSE.md) for details.
 
 ---
 
 ## Acknowledgments
 
-- Inspired by [phpMyAdmin](https://www.phpmyadmin.net) and [phpMiniAdmin](http://phpminiadmin.sourceforge.net) by Oleg Savchuk
+- Inspired by [phpMyAdmin](https://www.phpmyadmin.net) and [phpMiniAdmin](http://phpminiadmin.sourceforge.net)
 - Built with PHP, vanilla CSS, and vanilla JavaScript
 - No frameworks were harmed in the making of this tool
 
