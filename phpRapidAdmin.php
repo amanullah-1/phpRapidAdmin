@@ -1726,12 +1726,6 @@ function view_sql($db, $table) {
         $r = run_sql_multi($q, true, $page, $RAPID_ROWS_PER_PAGE + 1);
         $r['elapsed'] = round(microtime(true) - $t0, 4);
         $ran = $r;
-        // Redirect with query encoded in URL for persistence
-        $encodedQ = base64_encode(preg_replace('/[^a-zA-Z0-9_ ;\-\(\)+,.\']/', '', $q));
-        if (!headers_sent()) {
-            header('Location: ' . nurl(['a' => 'sql', 'q' => $encodedQ]));
-            exit;
-        }
     }
     ?>
 <div class="card">
